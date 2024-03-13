@@ -17,7 +17,7 @@ import os
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-# Current package
+# Parameter Configuration
 from param_configuration.config_layer import ConfigLayer
 from param_configuration.utils import walk_directory
 

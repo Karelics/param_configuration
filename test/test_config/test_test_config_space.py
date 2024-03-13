@@ -23,7 +23,7 @@ from unittest import mock
 # Thirdparty
 import pytest
 
-# Current package
+# Parameter Configuration
 from param_configuration.configuration import Configuration
 from param_configuration.temp_config_env import TempConfigEnv
 from param_configuration.utils import walk_directory

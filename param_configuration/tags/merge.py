@@ -15,7 +15,7 @@
 #  ------------------------------------------------------------------
 from pathlib import Path
 
-# Current package
+# Parameter Configuration
 from param_configuration.configuration import ConfigMultiConstructor, Configuration
 from param_configuration.utils import merge_left
 

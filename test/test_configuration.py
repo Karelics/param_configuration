@@ -22,7 +22,7 @@ import pytest
 import yaml
 from simpleeval import AttributeDoesNotExist
 
-# Current package
+# Parameter Configuration
 from param_configuration.configuration import Configuration
 from param_configuration.temp_config_env import TempConfigEnv
 

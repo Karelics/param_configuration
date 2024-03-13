@@ -26,7 +26,7 @@ from ruamel.yaml import BaseConstructor, Node, ScalarNode
 from ruamel.yaml.comments import CommentedMap
 from ruamel.yaml.constructor import Constructor
 
-# Current package
+# Parameter Configuration
 from param_configuration.config_layer import ConfigLayer
 from param_configuration.path_resolver import PathResolver
 

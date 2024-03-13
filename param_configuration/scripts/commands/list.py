@@ -7,7 +7,7 @@ from rich.console import Console
 from rich.text import Text
 from rich.tree import Tree
 
-# Current package
+# Parameter Configuration
 from param_configuration.configuration import Configuration
 from param_configuration.temp_config_env import TempConfigEnv
 

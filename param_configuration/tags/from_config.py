@@ -17,7 +17,7 @@
 # Thirdparty
 from ruamel.yaml import BaseConstructor
 
-# Current package
+# Parameter Configuration
 from param_configuration.configuration import ConfigConstructor, Configuration
 
 # pylint: disable=too-few-public-methods
