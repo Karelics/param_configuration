@@ -25,7 +25,7 @@ import numpy
 import simpleeval
 from ruamel.yaml import BaseConstructor, MappingNode
 
-# Current package
+# Parameter Configuration
 from param_configuration.configuration import ConfigConstructor, Configuration, get_resolved_yaml
 
 

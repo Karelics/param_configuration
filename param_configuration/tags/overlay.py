@@ -16,7 +16,7 @@
 # Thirdparty
 from ruamel.yaml import BaseConstructor
 
-# Current package
+# Parameter Configuration
 from param_configuration.configuration import ConfigConstructor, Configuration
 from param_configuration.utils import merge_left
 

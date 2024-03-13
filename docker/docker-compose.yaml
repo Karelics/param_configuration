@@ -1,12 +1,22 @@
 version: "3"
 
 services:
-  tests:
+  param_configuration:
     image: param_configuration
-    container_name: param_configuration_tests
     build:
       context: ../
       dockerfile: docker/Dockerfile
+    container_name: parameter_configuration
+    stdin_open: true
+    tty: true
+    volumes:
+      - ../:/ros2_ws/src/param_configuration/
+    command: bash
+
+  tests:
+    image: param_configuration
+    container_name: param_configuration_tests
+    profiles: [ "tests" ]
     stdin_open: true
     tty: true
     volumes:

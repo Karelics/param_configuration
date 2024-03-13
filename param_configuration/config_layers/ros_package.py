@@ -20,7 +20,7 @@ from typing import Dict, List, Union
 # ROS
 from ament_index_python.packages import PackageNotFoundError, get_package_share_directory
 
-# Current package
+# Parameter Configuration
 from param_configuration.config_layer import ConfigLayer
 from param_configuration.utils import walk_directory
 

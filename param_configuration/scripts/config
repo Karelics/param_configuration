@@ -18,7 +18,7 @@
 import typer
 from rich.console import Console
 
-# Current package
+# Parameter Configuration
 from param_configuration.scripts.commands.list import list_config_files
 from param_configuration.scripts.commands.print import print_config
 
