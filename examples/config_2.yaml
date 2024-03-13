@@ -1,0 +1,4 @@
+var_1: 1
+nested:
+  nested_2:
+    var_2: 2

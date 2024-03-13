@@ -1,0 +1,11 @@
+# !overlay   # Overlaying here would allow to also overlay the nav2_bringup package-level local_costmap config.
+             # Not done for example purposes.
+local_costmap/local_costmap:
+  ros__parameters:
+    plugins: [
+      "obstacle_layer",
+      "inflation_layer",
+      "virtual_walls_layer"
+    ]
+    robot_radius: 0.25
+    footprint_padding: 0.03

@@ -1,0 +1,3 @@
+!overlay
+nested_param:
+  device_param: 1

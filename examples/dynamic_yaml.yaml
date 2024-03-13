@@ -1,0 +1,27 @@
+# Variables can be declared in the beginning of the file with the ".variables" -key. This key
+# will be automatically removed from the resolved YAML file.
+.variables:
+  - example_var1: 1
+  - example_var2: 2
+
+# Eval -tag
+env_variable: !eval env.HOME
+math_eval: !eval (m.pi * 5)
+numpy_eval: !eval np.sin(1)
+rounded: !eval round(5.123, 1)
+path_eval: !eval path_to("rclpy")
+path_join: !eval join("/folder1", "folder")
+multiple_evals: !eval join(env.HOME, "folder")
+evaluate_variables: !eval var.example_var1 + var.example_var2
+
+# From -tag
+from_config: !from '!eval path_to("param_configuration") + "/examples/config_2.yaml var_1"'
+from_nested_config: !from '!eval path_to("param_configuration") + "/examples/config_2.yaml nested.nested_2.var_2"'
+
+# Include -tag
+included_config: !include '!eval path_to("param_configuration") + "/examples/config_2.yaml"'
+
+# Merge -tag. Makes all the params from config_2.yaml to be nested under merged_var, with the "already_existing_key"
+merged_var: !merge
+  - !include '!eval path_to("param_configuration") + "/examples/config_2.yaml"'
+  - already_existing_key: "abc"

@@ -1,0 +1,4 @@
+!overlay
+local_costmap/local_costmap:
+  ros__parameters:
+    robot_radius: 0.40  # Overrides the model-specific robot_radius

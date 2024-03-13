@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  tests:
+    image: param_configuration
+    container_name: param_configuration_tests
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - ../:/ros2_ws/src/param_configuration/
+    command: python3 -m pytest /ros2_ws/src/param_configuration/test
+
+  pylint:
+    image: param_configuration
+    container_name: param_configuration_pylint
+    profiles: [ "pylint" ]
+    volumes:
+      - ../:/ros2_ws/src/param_configuration/
+    command: bash -c "find ros2_ws/src/param_configuration -type f -name "*.py" | xargs pylint --rcfile=pyproject.toml"
