@@ -2,7 +2,7 @@ version: "3"
 
 services:
   param_configuration:
-    image: parameter_configuration
+    image: param_configuration
     build:
       context: ../
       dockerfile: docker/Dockerfile
