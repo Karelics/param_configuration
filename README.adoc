@@ -175,7 +175,6 @@ More information with the command `config --help`
 
 == Current limitations
 
-* config list and print -commands do not work for ROS layer
 * ROS layer parameters have to be in "params" -folder
 * Eval variables support only two levels of nesting:
 ** var_1: 1 - OK

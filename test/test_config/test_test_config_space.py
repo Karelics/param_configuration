@@ -17,7 +17,6 @@
 """Tests for validating the behavior in test_config space."""
 import os
 from pathlib import Path
-from pprint import pprint
 from unittest import mock
 
 # Thirdparty
@@ -46,11 +45,13 @@ def test_getting_yaml_from_config(test_config_path: Path) -> None:
 
 def test_walk_dir(test_config_path: Path) -> None:
     """Test loading from the test config space."""
-    print(test_config_path)
     with TempConfigEnv(path=test_config_path) as path:
         tree = walk_directory(directory=path)
-        pprint(tree)
-        # TODO This test doesn't yet assert anything. To be fixed with fixing the ROS directory listing
+        assert tree == {
+            "__files": [],
+            "device": {"__files": ["navigation_params.yaml"]},
+            "model": {"__files": ["navigation_params.yaml", "ruamel_types.yaml"]},
+        }
 
 
 def test_ruamel_types(test_config_path: Path) -> None:

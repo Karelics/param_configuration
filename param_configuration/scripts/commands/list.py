@@ -25,30 +25,24 @@ def list_config_files(config_directory: Annotated[Optional[str], typer.Option(he
     else:
         configuration = Configuration()
 
-    files = configuration.list_files()
+    files_and_folders = configuration.list_files()
     tree = Tree("Current config structure")
-    build_tree(tree=tree, files=files)
+    build_tree(tree=tree, files_and_folders=files_and_folders)
     console.print(tree)
 
 
-def build_tree(files: Dict, tree: Tree) -> Tree:
+def build_tree(files_and_folders: Dict, tree: Tree, directory_name="Layers") -> Tree:
     """Make a nice tree to print."""
-    for name, values in files.items():
-        if name == "__files":
-            filenames = values
-            for entry in filenames:
-                tree.add(Text(str(entry), "green"))
+    files = files_and_folders.pop("__files", [])
 
-        if "__files" in values:
-            branch = tree.add(f"[bold magenta]{name}:")
-            filenames = values.pop("__files")
-            for entry in filenames:
-                branch.add(Text(str(entry), "green"))
+    if not files and not files_and_folders:  # Return if there are no files or any more subdirectories
+        return tree
 
-            for folder in values:
-                if folder == "__files":
-                    continue
-                branch = branch.add(f"[bold magenta]{folder}:")
-                build_tree(values[folder], branch)
+    branch = tree.add(f"[bold magenta]{directory_name}:")
 
+    for file_name in files:
+        branch.add(Text(str(file_name), "green"))
+
+    for sub_dir_name, sub_dirs_and_files in files_and_folders.items():
+        build_tree(sub_dirs_and_files, branch, sub_dir_name)
     return tree
