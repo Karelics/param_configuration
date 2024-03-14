@@ -15,13 +15,13 @@ multiple_evals: !eval join(env.HOME, "folder")
 evaluate_variables: !eval var.example_var1 + var.example_var2
 
 # From -tag
-from_config: !from '!eval path_to("param_configuration") + "/examples/config_2.yaml var_1"'
-from_nested_config: !from '!eval path_to("param_configuration") + "/examples/config_2.yaml nested.nested_2.var_2"'
+from_config: !from '!eval path_to("param_configuration") + "/examples/yaml_placeholders/config_2.yaml var_1"'
+from_nested_config: !from '!eval path_to("param_configuration") + "/examples/yaml_placeholders/config_2.yaml nested.nested_2.var_2"'
 
 # Include -tag
-included_config: !include '!eval path_to("param_configuration") + "/examples/config_2.yaml"'
+included_config: !include '!eval path_to("param_configuration") + "/examples/yaml_placeholders/config_2.yaml"'
 
 # Merge -tag. Makes all the params from config_2.yaml to be nested under merged_var, with the "already_existing_key"
 merged_var: !merge
-  - !include '!eval path_to("param_configuration") + "/examples/config_2.yaml"'
+  - !include '!eval path_to("param_configuration") + "/examples/yaml_placeholders/config_2.yaml"'
   - already_existing_key: "abc"

@@ -1,0 +1,61 @@
+= Examples
+
+== YAML placeholders
+Check `yaml_placeholders/placeholder_examples.yaml` for example usages. Print the final evaluated YAML result file on command line with the "config" command line tool, which is provided by this package:
+```
+config print yaml_placeholders/placeholder_examples.yaml
+```
+
+This will print the following result:
+
+[source]
+----
+# Eval -tag
+env_variable: /root
+math_eval: 15.707963267948966
+numpy_eval: 0.8414709848078965
+rounded: 5.1
+path_eval: /opt/ros/humble/share/rclpy
+path_join: /folder1/folder
+multiple_evals: /root/folder
+evaluate_variables: 3
+
+# From -tag
+from_config: 1
+from_nested_config: 2
+
+# Include -tag
+included_config:
+  var_1: 1
+  nested:
+    nested_2:
+      var_2: 2
+
+# Merge -tag. Makes all the params from config_2.yaml to be nested under merged_var, with the "already_existing_key"
+merged_var:
+  var_1: 1
+  nested:
+    nested_2:
+      var_2: 2
+  already_existing_key: abc
+----
+
+== YAML overlaying
+Check the `overlay_config` folder for example usage. Print the final evaluated YAML result file on command line with:
+
+[source]
+----
+config print config://nav2_bringup/nav2_params.yaml --config-directory overlay_config/
+----
+
+
+Result:
+
+[source]
+----
+local_costmap/local_costmap:
+  ros__parameters:
+    plugins: [obstacle_layer, inflation_layer, virtual_walls_layer]
+    robot_radius: 0.4
+    footprint_padding: 0.03
+----
