@@ -44,15 +44,15 @@ class RosParamPackageLayer(ConfigLayer):
         return None
 
     def get_files(self) -> Dict[str, Union[List[Path], str]]:
-        packages = subprocess.check_output(["colcon", "list", "-n"]).decode("utf-8").split("\n")
+        packages = subprocess.check_output(["ros2", "pkg", "list"]).decode("utf-8").split("\n")
         res = {"__files": []}
         for package in packages:
-            if package:
-                try:
-                    package_dir = Path(get_package_share_directory(package)) / "params"
-                    if package_dir.exists():
-                        res[package] = walk_directory(directory=package_dir)
-                except (PackageNotFoundError, ValueError):
-                    pass
+            try:
+                package_dir = Path(get_package_share_directory(package)) / "params"
+                if package_dir.exists():
+                    res[package] = walk_directory(directory=package_dir)
+
+            except (PackageNotFoundError, ValueError):
+                pass
 
         return res

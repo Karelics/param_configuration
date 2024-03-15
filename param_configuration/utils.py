@@ -34,7 +34,10 @@ def merge_left(keys_a, keys_b, path=None):
 
 
 def walk_directory(directory: Path, tree=None) -> Dict:
-    """Recursively build a Tree with directory contents."""
+    """Recursively build a Tree with directory contents.
+
+    Lists only YAML files
+    """
     # Sort dirs first then by filename
     if tree is None:
         tree = {"__files": []}
@@ -53,6 +56,8 @@ def walk_directory(directory: Path, tree=None) -> Dict:
         if path.is_dir():
             tree[path.name] = walk_directory(path)
         else:
+            if not path.name.endswith(".yaml") and not path.name.endswith(".yml"):
+                continue
             tree["__files"] += [path.name]
 
     return tree
