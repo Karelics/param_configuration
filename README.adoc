@@ -9,7 +9,7 @@ image::images/yaml_placeholders.drawio.png[Task and Mission setup used in Nav2 e
 
 Available tags:
 
-* *Eval*: Evaluates commands in runtime, supporting file-level variables, environmental variables, math expressions, ROS package paths, and more.
+* *Eval*: Evaluates commands in runtime, supporting file-level variables, environment variables, math expressions, ROS package paths, and more.
 * *From*: Retrieves values from other YAML files.
 * *Include*: Fully includes another configuration file
 * *Merge*: Merges multiple key-value pairs to be under a single key
