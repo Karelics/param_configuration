@@ -60,7 +60,7 @@ local_costmap/local_costmap:
     footprint_padding: 0.03
 ----
 
-== Tutorial 1: Using YAML overlaying
+== Tutorial 1: Using YAML overlaying and placeholders
 
 Welcome to Tutorial 1 of configuring ROS 2 parameters with the Parameter Configuration package! In this tutorial, we'll walk you through setting up and configuring parameters for Nav2 package, specifically targeting the Turtlebot3 robot. Our main objective is to change some of the Nav2 parameters by overriding them without copy-pasting the complete params file, and to understand model and device-level parameters.
 
