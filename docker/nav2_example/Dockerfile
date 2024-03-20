@@ -60,7 +60,7 @@ RUN echo ". /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc && \
 COPY docker/nav2_example/nav2_with_param_configuration.launch.py /nav2_with_param_configuration.launch.py
 
 # Source the new workspace in the main terminal
-COPY docker/ros_entrypoint.sh /ros_entrypoint.sh
+COPY docker/param_configuration/ros_entrypoint.sh /ros_entrypoint.sh
 ENTRYPOINT ["/ros_entrypoint.sh"]
 
 CMD ["bash"]
