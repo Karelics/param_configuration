@@ -39,7 +39,7 @@ ros_node:
 === YAML file overlaying
 YAML overlaying allows to set parameter overrides per device and robot model. This will greatly reduce the parameter duplication, since only the overridden parameters need to be defined.
 
-image::images/yaml_overlaying.drawio.png[Task and Mission setup used in Nav2 examples, width=800, align=center]
+image::images/yaml_overlaying.drawio.png[Task and Mission setup used in Nav2 examples, width=600, align=center]
 
 The overlaying will automatically look for parameter files across three different levels:
 

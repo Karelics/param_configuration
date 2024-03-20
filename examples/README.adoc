@@ -1,4 +1,4 @@
-= Examples
+= Examples and tutorials
 
 == YAML placeholders
 Check `yaml_placeholders/placeholder_examples.yaml` for example usages. Print the final evaluated YAML result file on command line with the "config" command line tool, which is provided by this package:
@@ -59,3 +59,238 @@ local_costmap/local_costmap:
     robot_radius: 0.4
     footprint_padding: 0.03
 ----
+
+== Tutorial 1: Using YAML overlaying
+
+Welcome to Tutorial 1 of configuring ROS 2 parameters with the Parameter Configuration package! In this tutorial, we'll walk you through setting up and configuring parameters for Nav2 package, specifically targeting the Turtlebot3 robot. Our main objective is to change some of the Nav2 parameters by overriding them without copy-pasting the complete params file, and to understand model and device-level parameters.
+
+
+We use fully containerized environment, so no ROS 2 installation is required on your system. Instead, we expect you to run these examples on Ubuntu and have Docker installed:
+
+* https://docs.docker.com/get-docker/[Docker]
+* https://docs.docker.com/compose/install/[Docker Compose]
+
+*Step 1: Create Configuration Folders*
+
+First, let's create new folders to hold our parameter configurations:
+
+    mkdir -p $HOME/config/model
+    mkdir -p $HOME/config/device
+
+Without Docker, you would need to make `PARAM_CONFIG_DIR` environment variable to point into `$HOME/config` folder. Now you can skip this step, as it is already done for you in the link:../docker/nav2_example/docker-compose.yaml[docker-compose.yaml] file.
+
+*Step 2: Launch Nav2 Container*
+
+Let's launch the Docker container which has the Nav2 already installed and the param_configuration package built in a new workspace. Build and run the container, and launch the https://github.com/ros-planning/navigation2/blob/humble/nav2_bringup/launch/tb3_simulation_launch.py[tb3_simulation_launch.py] launch file by running in the repository root:
+
+    cd docker/nav2_example/
+    docker compose build
+    docker compose run -it --rm nav2
+    ros2 launch nav2_bringup tb3_simulation_launch.py headless:=False
+
+*NOTE:* Your first simulation launch most likely takes a long time, around 1-5 minutes due to slow Gazebo startup. Gazebo files are automatically cached so subsequent simulation launches should be faster. Robot spawning might crash on the first time due to this slow start, but a restart will fix the issue.
+
+To validate the setup, provide a pose estimate from Rviz and give a navigation goal for the robot. Shut down the simulation with CTRL-C.
+
+
+
+*Step 3: Check current Nav2 params*
+
+To see the existing parameters for Nav2, run
+
+    config print config://nav2_bringup/nav2_params.yaml
+
+Verify that the `FollowPath.max_vel_x` parameter for `controller_server` is set to `0.26`.
+
+*Step 4: Create Model Overrides*
+
+We'll start by creating robot model-specific parameter overrides, which would be applied for all the Turtlebot 3 devices you have. Create a parameter file:
+
+    mkdir -p $HOME/config/model/nav2_bringup
+    nano $HOME/config/model/nav2_bringup/nav2_params.yaml
+
+Add the following content to slow down the Turtlebot 3 maximum velocity:
+
+    !overlay
+    controller_server:
+      ros__parameters:
+        FollowPath:
+          max_vel_x: 0.1
+
+Save the file and exit.
+
+*Step 5: Verify Changes*
+
+
+Check if the new maximum velocity has been applied by printing the config:
+
+    config print config://nav2_bringup/nav2_params.yaml
+
+You can also view the current configuration structure with
+
+    config list
+
+*Step 6: Launch the simulation with the new configuration*
+
+To use the overlaying, we need to resolve our parameter file and pass it for the nav2_bringup launch file. For this, there exists an already created launch file link:../docker/nav2_example/nav2_with_param_configuration.launch.py[nav2_with_param_configuration.launch.py].
+
+Most importantly, note how we read the new parameter file with:
+
+```
+from param_configuration.configuration import get_resolved_yaml
+
+params_file = get_resolved_yaml("config://nav2_bringup/nav2_params.yaml")
+```
+
+Run the launch file with:
+
+    ros2 launch nav2_with_param_configuration.launch.py
+
+Give a navigation goal for the robot, and you will see it moving now much slower than previously.
+
+*Step 7: Create Device-Specific Parameters*
+
+Next, let's create device-specific parameter, which are applied for a single robot. For example, if you had one specific Turtlebot 3 that carries a larger payload than others, you could modify its radius:
+
+    mkdir -p $HOME/config/device/nav2_bringup
+    nano $HOME/config/device/nav2_bringup/nav2_params.yaml
+
+Add the following content:
+
+```
+!overlay
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      robot_radius: 0.4
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      robot_radius: 0.4
+```
+
+Again, verify the changes by printing the parameters and running the simulation.
+
+    config print config://nav2_bringup/nav2_params.yaml
+    ros2 launch nav2_with_param_configuration.launch.py
+
+The robot has now a bigger footprint which is big enough for the autonomous navigation not to plan between the large poles in the world.
+
+*Step 8: Use YAML placeholders and variables*
+
+We address duplication in the parameter file by leveraging YAML placeholders and variables. Instead of modifying the robot radius in multiple places, we can use the Parameter Configuration package to declare variables and read them. To do this, open the parameter file:
+
+```
+nano $HOME/config/device/nav2_bringup/nav2_params.yaml
+```
+
+Then, modify the existing YAML code to make it look like this:
+
+```
+!overlay
+.variables:
+  - robot_radius: 0.3
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      robot_radius: !eval var.robot_radius
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      robot_radius: !eval var.robot_radius
+```
+
+After making these changes, confirm the modifications by printing the updated parameter file:
+
+```
+config print config://nav2_bringup/nav2_params.yaml
+```
+
+*Congratulations! You've configured Nav2 parameters with model and device-specific overrides.*
+
+== Tutorial 2 - Add another device
+
+In Tutorial 1, you learned the basics of using the Param Configuration package to configure parameters for your robots in a ROS 2 environment. Now, in Tutorial 2, we'll expand on that knowledge by adding another device to our configuration.
+
+Before proceeding with this tutorial, ensure you have completed Tutorial 1.
+
+*Step 1: Prepare the Container*
+
+If your container is not already up and running from Tutorial 1, build and run it using:
+
+    docker compose build
+    docker compose run -it --rm nav2
+
+*Step 2: Adjust the Existing Folder Structure*
+
+To accommodate a new device, we'll organize our folders accordingly. Let's start by creating a new folder for the existing Turtlebot3 device and move the existing files into it. In general, the folder names for devices can be for example unique IDs of the robot or some type of combination of the model name and ID. We use the combination: "turtlebot3_123"
+
+    mkdir -p $HOME/config/device/turtlebot3_123
+    mv $HOME/config/device/nav2_bringup $HOME/config/device/turtlebot3_123/nav2_bringup
+
+This structure should be used in development / simulation environments, as it allows you to easily modify all the existing robot parameters in your IDE and set up a new device parameters for your simulation.
+
+*Step 3: Create Simulation Parameters*
+
+Now, let's create a new folder for our simulation parameters:
+
+    mkdir -p $HOME/config/device/simulation/nav2_bringup
+    nano $HOME/config/device/simulation/nav2_bringup/nav2_params.yaml
+
+Just for demonstration purposes, let's make your simulated Turtlebot again to respect the original `max_vel_x` value. Add the following contents in to the parameter file.
+```
+!overlay
+controller_server:
+  ros__parameters:
+    FollowPath:
+      max_vel_x: 0.26
+```
+
+*Step 4: Set Device Directory*
+
+Since we now have multiple folders under the "device" layer, we need to inform the Parameter Configuration package about the directory to use. Set the environment variable:
+
+    export PARAM_DEVICE_DIR=$HOME/config/device/simulation
+
+Alternatively, you can set this permanently in the link:../docker/nav2_example/docker-compose.yaml[docker-compose.yaml] file, then restart the container:
+
+    environment:
+        - PARAM_DEVICE_DIR=/home/user/config/device/simulation
+
+*Step 5: Verify Configuration*
+
+Now, the `max_vel_x` is overridden at different levels: device level (0.26), model level (0.1), and default (0.26). The final set value for the simulated Turtlebot is 0.26, since the device layer overrides the other ones. Confirm the configuration changes by printing the parameters:
+
+    config print config://nav2_bringup/nav2_params.yaml
+
+*That's it! You have now added a second device, "simulation" into your configuration.*
+
+== General tips and tricks
+
+* Store the whole `config` directory as a git repository for version control.
+* Add Docker compose files into the same repository to keep the version of the software synchronized with the parameter files.
+* To add multiple robot models, set up the folder structure in a following way and then point to the correct robot with `PARAM_CONFIG_DIR` env variable.
+
+++++
+<pre>
+config/
+├── turtlebot3/
+│   ├── model/
+│   │   └── nav2_bringup/
+│   │       └── nav2_params.yaml
+│   ├── device/
+│   │   ├── simulation/
+│   │   │   └── nav2_bringup/
+│   │   │       └── nav2_params.yaml
+│   │   └── turtlebot3_123/
+│   │       └── ...
+│   └── docker-compose.yaml
+├── spot_boston_dynamics/
+    └── ...
+</pre>
+++++
+** *NOTE* Versioning of the files and the repository structure is still experimental. The suggested structure might change in the near future based on new additions and improvements.
+* Deployment from Git to robots should happen with your own selected method. For example Ansible is one option to select the correct device and robot model folders to be deployed on the robot.
