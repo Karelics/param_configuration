@@ -47,8 +47,9 @@ The overlaying will automatically look for parameter files across three differen
 * Model level
 * ROS Package level
 
-For example, any parameter that is set in Device level configuration, will override Model level and ROS Package level configurations. Overlaying files need to have `!overlay` tag in the beginning of the file, otherwise it won't be overlaid with a level below.
+For example, any parameter that is set in Device level configuration, will override Model level and ROS Package level configurations. Overlaying files need to have `!overlay` tag in the beginning of the file, otherwise it won't be overlaid with a level below. Check out the tutorials in link:examples[examples] folder.
 
+This level structure is also extendable, so that you can have your custom configuration for the overlaying levels.
 
 == Setup [[setup]]
 
@@ -129,9 +130,9 @@ If `--config-directory` is not given, uses the default `PARAM_CONFIG_DIR` direct
 
 More information with the command `config --help`
 
-== Examples
+== Examples and tutorials
 
-Examples and their run instructions can be found in link:examples[examples] folder.
+Examples and tutorials can be found in link:examples[examples] folder.
 
 == Supported Eval -commands
 [cols="1,1,1"]
