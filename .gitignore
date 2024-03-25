@@ -1,0 +1,2 @@
+docker/nav2_example/gazebo_init/*
+!docker/nav2_example/gazebo_init/.gitkeep

@@ -10,8 +10,8 @@ jobs:
         python-version: '3.8'
     - uses: pre-commit/action@v3.0.1
     - name: Build the Docker image
-      run: docker compose -f docker/docker-compose.yaml build
+      run: docker compose -f docker/param_configuration/docker-compose.yaml build
     - name: Tests
-      run: docker compose -f docker/docker-compose.yaml run tests
+      run: docker compose -f docker/param_configuration/docker-compose.yaml run tests
     - name: Pylint
-      run: docker compose -f docker/docker-compose.yaml run pylint
+      run: docker compose -f docker/param_configuration/docker-compose.yaml run pylint

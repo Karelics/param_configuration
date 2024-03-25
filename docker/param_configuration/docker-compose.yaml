@@ -4,13 +4,13 @@ services:
   param_configuration:
     image: param_configuration
     build:
-      context: ../
-      dockerfile: docker/Dockerfile
+      context: ../../
+      dockerfile: docker/param_configuration/Dockerfile
     container_name: parameter_configuration
     stdin_open: true
     tty: true
     volumes:
-      - ../:/ros2_ws/src/param_configuration/
+      - ../../:/ros2_ws/src/param_configuration/
     command: bash
 
   tests:
@@ -20,7 +20,7 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ../:/ros2_ws/src/param_configuration/
+      - ../../:/ros2_ws/src/param_configuration/
     command: python3 -m pytest /ros2_ws/src/param_configuration/test
 
   pylint:
@@ -28,5 +28,5 @@ services:
     container_name: param_configuration_pylint
     profiles: [ "pylint" ]
     volumes:
-      - ../:/ros2_ws/src/param_configuration/
+      - ../../:/ros2_ws/src/param_configuration/
     command: bash -c "find ros2_ws/src/param_configuration -type f -name "*.py" | xargs pylint --rcfile=pyproject.toml"
