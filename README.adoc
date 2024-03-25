@@ -195,6 +195,18 @@ If you have feature requests or find any bugs or usability issues, please open a
 ** NOT SUPPORTED: var_3: !eval var.var_2 + 1
 * Comments might be on the wrong lines in the resolved YAML
 
+== Open questions
+Since the package is still in an experimental phase, there are still many open questions, for example:
+
+* How to store secret parameters, such as passwords
+* What is the best git folder structure, when we have more layers than just model and device?
+* How to easily configure a custom amount of the layers?
+* How to handle parameter setting in runtime with dynamic parameters?
+* Is there a better syntax for YAML placeholders, such as using the curly brackets?
+* Should there be changes to the git directory structure, if the parameters are deployed to multiple different computers on a single device?
+* What is the best way of identifying the software version and version of the device parameters?
+
+
 == Acknowledgements
 
 Parameter Configuration is developed and maintained by Karelics Oy. Current active maintainers:
