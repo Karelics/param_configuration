@@ -20,21 +20,17 @@ RUN apt-get update && \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Copy the necessary files
+COPY ./pyproject.toml /
+COPY . ${ROS2_WS}/src/param_configuration
+
 # Install pylint for code analysis and install other Python dependencies
 RUN pip3 install \
     pylint \
-    simpleeval==0.9.13 \
-    ruamel.yaml.string==0.1.1 \
-    ruamel.yaml==0.18.5 \
-    rich==13.7.0 \
-    typer==0.9.0 \
+    -r ${ROS2_WS}/src/param_configuration/requirements.txt \
     --no-cache-dir
 
-COPY ./pyproject.toml /
-
 # Build Parameter Configuration in the newly created workspace
-COPY . ${ROS2_WS}/src/param_configuration
-
 RUN cd ${ROS2_WS} && \
     apt-get update && \
     . /opt/ros/${ROS_DISTRO}/setup.bash && \
