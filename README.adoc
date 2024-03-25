@@ -130,6 +130,12 @@ If `--config-directory` is not given, uses the default `PARAM_CONFIG_DIR` direct
 
 More information with the command `config --help`
 
+== Requirements
+
+The package requires Python dependencies in the `requirements.txt` to be installed. Install them easily with
+
+    pip3 install -r requirements.txt
+
 == Examples and tutorials
 
 Examples and tutorials can be found in link:examples[examples] folder.
