@@ -209,9 +209,9 @@ Since the package is still in an experimental phase, there are still many open q
 
 == Acknowledgements
 
-Parameter Configuration is developed and maintained by Karelics Oy. Current active maintainers:
+Current active maintainers:
 
-- https://www.linkedin.com/in/martmoerdijk/[Mart Moerdijk] - Main author
+- https://www.linkedin.com/in/martmoerdijk/[Mart Moerdijk], Karelics Oy - Main author
 
 - https://www.linkedin.com/in/janne-karttunen-a22375209/[Janne Karttunen] - Secondary author
 
