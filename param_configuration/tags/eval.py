@@ -39,18 +39,19 @@ class Dotdict(dict):
         return dict.get(item, *args, **kwargs)
 
 
-def names(var: dict[str, Any]) -> dict[str, Any]:
-    """Function proving additional variables for simple eval."""
+def additional_names(var: dict[str, Any]) -> dict[str, Any]:
+    """Function providing additional variables for simple eval."""
     return {"env": os.environ, "m": math, "np": numpy, "var": Dotdict(var)}
 
 
-def functions() -> dict[str, Any]:
+def additional_functions() -> dict[str, Any]:
     """Function providing additional function for simple eval."""
     return {
         "path_to": get_package_share_directory,
         "join": os.path.join,
         "round": round,
         "get_resolved_yaml": get_resolved_yaml,
+        "to_string": str,
     }
 
 
@@ -71,8 +72,10 @@ class EvalConfigConstructor(ConfigConstructor, tag="!eval"):
         self._vars = self.extract_variables(loader)
 
         default_functions = simpleeval.DEFAULT_FUNCTIONS
-        default_functions.update(functions())
-        res = simpleeval.simple_eval(expr=tag_value, functions=default_functions, names=names(var=self._vars))
+        default_functions.update(additional_functions())
+        res = self.eval_with_compound_types(
+            tag_value, functions=default_functions, names=additional_names(var=self._vars)
+        )
         return res
 
     @staticmethod
@@ -102,6 +105,12 @@ class EvalConfigConstructor(ConfigConstructor, tag="!eval"):
                         if var:
                             variables |= var
         return variables
+
+    @staticmethod
+    def eval_with_compound_types(tag_value: str, functions: dict[str, Any], names: dict[str, Any]) -> Any:
+        """Evaluates the tag value with compound types."""
+        obj = simpleeval.EvalWithCompoundTypes(functions=functions, names=names)
+        return obj.eval(tag_value)
 
 
 # Add the constructor.
