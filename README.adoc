@@ -173,10 +173,13 @@ Examples and tutorials can be found in link:examples[examples] folder.
 |param_configuration.configuration.get_resolved_yaml
 |Resolves the given YAML file and returns a path to it.
 
+|!eval to_string()
+|str()
+|Converts the given value to a string. Handy when using nested evaluations.
+
 |!eval var.<var_name>
 |-
 |Allows using variables which are defined in the beginning of the same file, under ".variables" -key. This key will be removed from the result file.
-
 |===
 
 
