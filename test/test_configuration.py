@@ -78,6 +78,38 @@ def test_eval_tag_from_string(yaml_string: str) -> None:
         assert data_str == expected_str
 
 
+def test_eval_round() -> None:
+    """Test the !eval directive with the round function."""
+    yaml_string = """
+    round: !eval round(3.141592653589793, 2)
+    """
+    expected_string = "round: 3.14"
+
+    configuration = Configuration()
+    data = configuration.load(yaml_string)
+    data_str = configuration.dump(data)
+    assert data_str == expected_string
+
+
+def test_eval_to_string() -> None:
+    """Test the !eval directive with the to_string function."""
+    yaml_string = """
+    float_to_string: !eval to_string(3.141592653589793)
+    array_to_string: !eval to_string([[1.0, 1.0], [2.0, 2.0]])
+    """
+    # fmt: off
+    expected_string = (
+        "float_to_string: '3.141592653589793'\n"
+        "array_to_string: '[[1.0, 1.0], [2.0, 2.0]]'"
+    )
+    # fmt: on
+
+    configuration = Configuration()
+    data = configuration.load(yaml_string)
+    data_str = configuration.dump(data)
+    assert data_str == expected_string
+
+
 def test_eval_small_numbers() -> None:
     """Test the loading and dumping !eval directive from a string."""
     configuration = Configuration()
