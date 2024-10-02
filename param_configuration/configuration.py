@@ -15,6 +15,8 @@
 #  ------------------------------------------------------------------
 import pathlib
 import tempfile
+import io
+
 from abc import abstractmethod
 from pathlib import Path
 from typing import Any, Optional, Type, Union
@@ -173,9 +175,10 @@ class Configuration:
     def dump(data: dict) -> str:
         """Dump the YAML dictionary into string format."""
         yaml = ruamel.yaml.YAML(typ=["rt", "string"])
-        # pylint: disable=no-member
-        # Pylint thinks dump_to_string doesn't exist, but seems to work correctly.
-        return yaml.dump_to_string(data)
+
+        with io.StringIO() as stream:
+            yaml.dump(data, stream)
+            return stream.getvalue()
 
     @staticmethod
     def dump_to_file(data: dict, path: str, yaml_version: Optional[str] = None) -> str:
