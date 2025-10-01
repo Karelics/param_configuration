@@ -16,7 +16,6 @@
 import io
 import pathlib
 import tempfile
-
 from abc import abstractmethod
 from pathlib import Path
 from typing import Any, Optional, Type, Union

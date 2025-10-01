@@ -493,6 +493,7 @@ named_sequence:
                 "new_sequence": [1],
             }
 
+
 @mock.patch.dict(os.environ, {"PARAM_DEVICE_DIR": "device"})
 def test_overlay_append_empty_device_config(tmp_path: Path) -> None:
     """Make sure that the sequence appending works correctly when we have empty "device".
