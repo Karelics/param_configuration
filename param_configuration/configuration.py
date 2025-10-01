@@ -13,9 +13,9 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #  ------------------------------------------------------------------
+import io
 import pathlib
 import tempfile
-import io
 
 from abc import abstractmethod
 from pathlib import Path

@@ -428,14 +428,13 @@ var5: "package_level_var5"
 
 @mock.patch.dict(os.environ, {"PARAM_DEVICE_DIR": "device"})
 def test_overlay_append(tmp_path: Path) -> None:
-    """Test that overlay_append correctly appends sequences.
-    """
+    """Test that overlay_append correctly appends sequences."""
     package_name = "test_package"
 
     # This file exist on device / model and package level
     test_file_1 = "test_file1.yaml"
 
-    device_data = f"""
+    device_data = """
 !overlay_append
 var1: "device_level_1"
 var2: "device_level_2"
@@ -485,16 +484,20 @@ named_sequence:
             assert data == {
                 "var1": "device_level_1",
                 "sequence": [0, 1, 2, 3],
-                "named_sequence": [{'val_1': 1, 'val_2': 2}, {'val_1': 100, 'val_2': 200}, {'val_1': 1000, 'val_2': 2000}],
+                "named_sequence": [
+                    {'val_1': 1, 'val_2': 2},
+                    {'val_1': 100, 'val_2': 200},
+                    {'val_1': 1000, 'val_2': 2000}
+                ],
                 "var2": "device_level_2",
                 "new_sequence": [1],
             }
 
 @mock.patch.dict(os.environ, {"PARAM_DEVICE_DIR": "device"})
 def test_overlay_append_empty_device_config(tmp_path: Path) -> None:
-    """
-    Make sure that the sequence appending works correctly when we have empty "device". Previously,
-    this wasn't working as expected, and ended up always adding again the appended sequence.
+    """Make sure that the sequence appending works correctly when we have empty "device".
+
+    Previously, this wasn't working as expected, and ended up always adding again the appended sequence.
     """
     package_name = "test_package"
 
@@ -539,7 +542,11 @@ named_sequence:
             assert data == {
                 "var1": "model_level_1",
                 "sequence": [0, 1, 2],
-                "named_sequence": [{'val_1': 1, 'val_2': 2}, {'val_1': 100, 'val_2': 200}, {'val_1': 1000, 'val_2': 2000}],
+                "named_sequence": [
+                    {'val_1': 1, 'val_2': 2},
+                    {'val_1': 100, 'val_2': 200},
+                    {'val_1': 1000, 'val_2': 2000}
+                ],
             }
 
 
