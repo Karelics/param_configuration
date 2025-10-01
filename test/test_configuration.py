@@ -487,7 +487,7 @@ named_sequence:
                 "named_sequence": [
                     {'val_1': 1, 'val_2': 2},
                     {'val_1': 100, 'val_2': 200},
-                    {'val_1': 1000, 'val_2': 2000}
+                    {'val_1': 1000, 'val_2': 2000},
                 ],
                 "var2": "device_level_2",
                 "new_sequence": [1],
@@ -545,7 +545,7 @@ named_sequence:
                 "named_sequence": [
                     {'val_1': 1, 'val_2': 2},
                     {'val_1': 100, 'val_2': 200},
-                    {'val_1': 1000, 'val_2': 2000}
+                    {'val_1': 1000, 'val_2': 2000},
                 ],
             }
 
