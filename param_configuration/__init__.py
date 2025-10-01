@@ -21,3 +21,4 @@ from param_configuration.tags.from_config import FromConfigConstructor  # noqa
 from param_configuration.tags.include import IncludeConfigConstructor  # noqa
 from param_configuration.tags.merge import MergeMultiConfigConstructor  # noqa
 from param_configuration.tags.overlay import OverlayConfigConstructor  # noqa
+from param_configuration.tags.overlay_append import OverlayAppendConfigConstructor  # noqa

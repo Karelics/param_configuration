@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Dict
 
 
-def merge_left(keys_a, keys_b, path=None):
+def merge_left(keys_a, keys_b, path=None, append=False):
     """Merges b into a where b overwrites a."""
     if path is None:
         path = []
@@ -26,6 +26,11 @@ def merge_left(keys_a, keys_b, path=None):
         if key in keys_a:
             if isinstance(keys_a[key], dict) and isinstance(keys_b[key], dict):
                 merge_left(keys_a[key], keys_b[key], path + [str(key)])
+            elif append and isinstance(keys_a[key], list) and isinstance(keys_b[key], list):
+                # If we are in "append" mode, append all the sequences instead of replacing them
+                for appended_key in keys_b[key]:
+                    if appended_key not in keys_a[key]:
+                        keys_a[key] += keys_b[key]
             else:
                 keys_a[key] = keys_b[key]
         else:

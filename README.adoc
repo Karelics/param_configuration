@@ -47,7 +47,11 @@ The overlaying will automatically look for parameter files across three differen
 * Model level
 * ROS Package level
 
-For example, any parameter that is set in Device level configuration, will override Model level and ROS Package level configurations. Overlaying files need to have `!overlay` tag in the beginning of the file, otherwise it won't be overlaid with a level below. Check out the tutorials in link:examples[examples] folder.
+For example, any parameter that is set in Device level configuration, will override Model level and ROS Package level configurations.
+
+**Tags:**
+- `!overlay`: Set in the beginning of the file, to overlay the file with a layer below. Check out the tutorials in link:examples[examples] folder.
+- `!overlay_append`: Similar to `!overlay`, but instead of replacing the YAML sequences (lists), appends to them.
 
 This level structure is also extendable, so that you can have your custom configuration for the overlaying levels.
 

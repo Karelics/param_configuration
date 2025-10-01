@@ -426,6 +426,123 @@ var5: "package_level_var5"
             }
 
 
+@mock.patch.dict(os.environ, {"PARAM_DEVICE_DIR": "device"})
+def test_overlay_append(tmp_path: Path) -> None:
+    """Test that overlay_append correctly appends sequences.
+    """
+    package_name = "test_package"
+
+    # This file exist on device / model and package level
+    test_file_1 = "test_file1.yaml"
+
+    device_data = f"""
+!overlay_append
+var1: "device_level_1"
+var2: "device_level_2"
+sequence: [3]
+new_sequence:
+  - 1
+named_sequence:
+  - val_1: 1000
+    val_2: 2000
+"""
+
+    model_data_1 = """
+!overlay_append
+var1: "model_level_1"
+"""
+
+    package_data_1 = """
+var1: "package_level_var3"
+sequence: [0, 1, 2]
+named_sequence:
+  - val_1: 1
+    val_2: 2
+  - val_1: 100
+    val_2: 200
+"""
+
+    # Create a device directory and add file
+    write_to_file_config_layer(device_data, "device", package_name, test_file_1, tmp_path)
+
+    # Create a model directory and add files
+    write_to_file_config_layer(model_data_1, "model", package_name, test_file_1, tmp_path)
+
+    # Create a package directory and add file
+    package_dir = tmp_path / "test_install_space/"
+    (package_dir / package_name / "params/").mkdir(parents=True, exist_ok=True)
+    package_param_file = package_dir / package_name
+    (package_param_file / "params/test_file1.yaml").write_text(package_data_1)
+
+    with mock.patch(
+        "param_configuration.config_layers.ros_package.get_package_share_directory",
+        return_value=str(package_param_file),
+    ):
+        # Set the param config directory to a tmp directory
+        with TempConfigEnv(path=tmp_path):
+            configuration = Configuration()
+            data = configuration.load(f"config://{package_name}/{test_file_1}")
+            assert data == {
+                "var1": "device_level_1",
+                "sequence": [0, 1, 2, 3],
+                "named_sequence": [{'val_1': 1, 'val_2': 2}, {'val_1': 100, 'val_2': 200}, {'val_1': 1000, 'val_2': 2000}],
+                "var2": "device_level_2",
+                "new_sequence": [1],
+            }
+
+@mock.patch.dict(os.environ, {"PARAM_DEVICE_DIR": "device"})
+def test_overlay_append_empty_device_config(tmp_path: Path) -> None:
+    """
+    Make sure that the sequence appending works correctly when we have empty "device". Previously,
+    this wasn't working as expected, and ended up always adding again the appended sequence.
+    """
+    package_name = "test_package"
+
+    # This file exist on device / model and package level
+    test_file_1 = "test_file1.yaml"
+
+    model_data_1 = """
+!overlay_append
+var1: "model_level_1"
+named_sequence:
+  - val_1: 1000
+    val_2: 2000
+"""
+
+    package_data_1 = """
+var1: "package_level_var3"
+sequence: [0, 1, 2]
+named_sequence:
+  - val_1: 1
+    val_2: 2
+  - val_1: 100
+    val_2: 200
+"""
+
+    # Create a model directory and add files
+    write_to_file_config_layer(model_data_1, "model", package_name, test_file_1, tmp_path)
+
+    # Create a package directory and add file
+    package_dir = tmp_path / "test_install_space/"
+    (package_dir / package_name / "params/").mkdir(parents=True, exist_ok=True)
+    package_param_file = package_dir / package_name
+    (package_param_file / "params/test_file1.yaml").write_text(package_data_1)
+
+    with mock.patch(
+        "param_configuration.config_layers.ros_package.get_package_share_directory",
+        return_value=str(package_param_file),
+    ):
+        # Set the param config directory to a tmp directory
+        with TempConfigEnv(path=tmp_path):
+            configuration = Configuration()
+            data = configuration.load(f"config://{package_name}/{test_file_1}")
+            assert data == {
+                "var1": "model_level_1",
+                "sequence": [0, 1, 2],
+                "named_sequence": [{'val_1': 1, 'val_2': 2}, {'val_1': 100, 'val_2': 200}, {'val_1': 1000, 'val_2': 2000}],
+            }
+
+
 def write_to_file_config_layer(data, level, package_name, file_name, config_base_dir):
     """Creates necessary folders and writes the file."""
     device_dir = config_base_dir / f"{level}/"
