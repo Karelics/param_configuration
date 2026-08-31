@@ -1,5 +1,5 @@
-simpleeval==0.9.13
+simpleeval==1.0.7
 ruamel.yaml.string==0.1.1
-ruamel.yaml==0.18.5
-rich==13.7.0
-typer==0.9.0
+ruamel.yaml==0.19.1
+rich==15.0.0
+typer==0.27.2

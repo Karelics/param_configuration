@@ -42,8 +42,8 @@ class PathResolver:
         layers.
 
         :param path: YAML in string format, or path to the YAML file
-        :param config_layers: List of configuration layers that describe the order of overlaying different
-            YAML files. If None, uses the default layers
+        :param config_layers: List of configuration layers that describe the order of overlaying different YAML files.
+            If None, uses the default layers
         :return: Resolved configuration data as a string or Path object.
         :raises ValueError: If the path cannot be resolved
         """

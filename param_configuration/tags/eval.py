@@ -41,7 +41,12 @@ class Dotdict(dict):
 
 def additional_names(var: dict[str, Any]) -> dict[str, Any]:
     """Function providing additional variables for simple eval."""
-    return {"env": os.environ, "m": math, "np": numpy, "var": Dotdict(var)}
+    return {
+        "env": os.environ,
+        "m": simpleeval.ModuleWrapper(math),
+        "np": simpleeval.ModuleWrapper(numpy),
+        "var": Dotdict(var),
+    }
 
 
 def additional_functions() -> dict[str, Any]:
@@ -80,8 +85,9 @@ class EvalConfigConstructor(ConfigConstructor, tag="!eval"):
 
     @staticmethod
     def extract_variables(loader) -> dict:
-        """Extracts variables from a YAML loader. Variable loading works slightly differently for !overlay tagged files
-        and for regular files.
+        """Extracts variables from a YAML loader.
+
+        Variable loading works slightly differently for !overlay tagged files and for regular files.
 
         :param loader: The YAML loader containing the data.
         :type loader: Loader
