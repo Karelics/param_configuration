@@ -307,7 +307,6 @@ def test_include_tag(tmp_path: Path) -> None:
 
 def test_from_tag(tmp_path: Path) -> None:
     """Test getting values from config file using !from-tag."""
-
     test_file1 = tmp_path / "test_file1.yaml"
     test_file2 = tmp_path / "test_file2.yaml"
 
@@ -424,6 +423,94 @@ var5: "package_level_var5"
                 "test_include": {"var1a": "model_level_var1a", "var2b": "model_level_var2b"},
                 "test_from": "model_level_var1a",
             }
+
+
+@mock.patch.dict(os.environ, {"PARAM_DEVICE_DIR": "device"})
+def test_append_tag(tmp_path: Path) -> None:
+    """Test that !append concatenates a list onto the lower overlay layer's list, across all three layers."""
+    package_name = "test_package"
+    test_file_1 = "test_file1.yaml"
+
+    device_data = """
+!overlay
+list_param: !append [3]
+"""
+
+    model_data = """
+!overlay
+list_param: !append [2]
+"""
+
+    package_data = """
+list_param: [1]
+"""
+
+    write_to_file_config_layer(device_data, "device", package_name, test_file_1, tmp_path)
+    write_to_file_config_layer(model_data, "model", package_name, test_file_1, tmp_path)
+
+    package_dir = tmp_path / "test_install_space/"
+    (package_dir / package_name / "params/").mkdir(parents=True, exist_ok=True)
+    package_param_file = package_dir / package_name
+    (package_param_file / "params/test_file1.yaml").write_text(package_data)
+
+    with mock.patch(
+        "param_configuration.config_layers.ros_package.get_package_share_directory",
+        return_value=str(package_param_file),
+    ):
+        with TempConfigEnv(path=tmp_path):
+            configuration = Configuration()
+            data = configuration.load(f"config://{package_name}/{test_file_1}")
+            assert data == {"list_param": [1, 2, 3]}
+            assert type(data["list_param"]) is list  # pylint: disable=unidiomatic-typecheck
+
+
+@mock.patch.dict(os.environ, {"PARAM_DEVICE_DIR": "device"})
+def test_append_tag_then_override(tmp_path: Path) -> None:
+    """Test that a plain list on a higher layer overrides an !append result from a lower layer, instead of
+    concatenating onto it."""
+    package_name = "test_package"
+    test_file_1 = "test_file1.yaml"
+
+    device_data = """
+!overlay
+list_param: [9, 9]
+"""
+
+    model_data = """
+!overlay
+list_param: !append [2]
+"""
+
+    package_data = """
+list_param: [1]
+"""
+
+    write_to_file_config_layer(device_data, "device", package_name, test_file_1, tmp_path)
+    write_to_file_config_layer(model_data, "model", package_name, test_file_1, tmp_path)
+
+    package_dir = tmp_path / "test_install_space/"
+    (package_dir / package_name / "params/").mkdir(parents=True, exist_ok=True)
+    package_param_file = package_dir / package_name
+    (package_param_file / "params/test_file1.yaml").write_text(package_data)
+
+    with mock.patch(
+        "param_configuration.config_layers.ros_package.get_package_share_directory",
+        return_value=str(package_param_file),
+    ):
+        with TempConfigEnv(path=tmp_path):
+            configuration = Configuration()
+            data = configuration.load(f"config://{package_name}/{test_file_1}")
+            assert data == {"list_param": [9, 9]}
+
+
+def test_append_tag_no_lower_layer() -> None:
+    """Test that !append works even without a lower layer's list to concatenate onto."""
+    yaml_data = """
+    list_param: !append [1, 2]
+    """
+    data = Configuration().load(yaml_data)
+    assert data == {"list_param": [1, 2]}
+    assert type(data["list_param"]) is list  # pylint: disable=unidiomatic-typecheck
 
 
 def write_to_file_config_layer(data, level, package_name, file_name, config_base_dir):

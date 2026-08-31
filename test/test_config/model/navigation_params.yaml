@@ -1,2 +1,3 @@
 nested_param:
   model_param: 2
+list_param: [1]

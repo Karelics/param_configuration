@@ -30,6 +30,7 @@ from ruamel.yaml.constructor import Constructor
 # Parameter Configuration
 from param_configuration.config_layer import ConfigLayer
 from param_configuration.path_resolver import PathResolver
+from param_configuration.utils import unwrap_append_lists
 
 
 class ConfigConstructor:
@@ -150,6 +151,7 @@ class Configuration:
 
         resolved_yaml = yaml_loader.load(path if path else file)
         resolved_yaml.pop(".variables", None)  # Remove the variables that are used for eval purposes
+        unwrap_append_lists(resolved_yaml)  # Replace any leftover !append markers with plain lists
         return resolved_yaml
 
     def add_config_constructor(self, const: Type[ConfigConstructor]):
