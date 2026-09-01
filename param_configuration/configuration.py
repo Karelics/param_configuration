@@ -13,10 +13,9 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #  ------------------------------------------------------------------
+import io
 import pathlib
 import tempfile
-import io
-
 from abc import abstractmethod
 from pathlib import Path
 from typing import Any, Optional, Type, Union
@@ -178,7 +177,7 @@ class Configuration:
 
         with io.StringIO() as stream:
             yaml.dump(data, stream)
-            return stream.getvalue()
+            return stream.getvalue().rstrip("\n")
 
     @staticmethod
     def dump_to_file(data: dict, path: str, yaml_version: Optional[str] = None) -> str:
