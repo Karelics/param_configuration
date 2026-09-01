@@ -107,8 +107,8 @@ class Configuration:
         """Loads a given YAML file into a ruamel format dictionary.
 
         :param file: Yaml file in string format or path to YAML file
-        :param config_layers: List of configuration layers that describe the order of overlaying different
-            YAML files. If None, uses the default layers
+        :param config_layers: List of configuration layers that describe the order of overlaying different YAML files.
+            If None, uses the default layers
         :return: Loaded yaml file in Ruamel format. Mainly CommentedMap which corresponds dictionary.
         """
         path = None
@@ -194,9 +194,11 @@ class Configuration:
 
 
 def get_resolved_yaml(path: str):
-    """Evaluates YAML file and dumps it into a temporary file. When passing parameters for ROS Nodes, passing a file is
-    desired, as that way we can maintain Node names that exist in the parameter file. Otherwise, passing two parameter
-    dictionaries to a single Node might lead into a parameter name conflicts.
+    """Evaluates YAML file and dumps it into a temporary file.
+
+    When passing parameters for ROS Nodes, passing a file is desired, as that way we can maintain Node names that exist
+    in the parameter file. Otherwise, passing two parameter dictionaries to a single Node might lead into a parameter
+    name conflicts.
 
     :param path: path to YAML file
     :return: path to evaluated YAML file

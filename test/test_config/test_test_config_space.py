@@ -13,7 +13,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #  ------------------------------------------------------------------
-
 """Tests for validating the behavior in test_config space."""
 import os
 from pathlib import Path

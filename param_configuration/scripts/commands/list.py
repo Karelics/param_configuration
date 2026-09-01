@@ -16,7 +16,6 @@ console = Console()
 
 def list_config_files(config_directory: Annotated[Optional[str], typer.Option(help="path to the config dir")] = None):
     """Prints the tree of the current config structure."""
-
     if config_directory is not None:
         console.print(f"[bold][red] Got custom config directory: {config_directory}")
 
