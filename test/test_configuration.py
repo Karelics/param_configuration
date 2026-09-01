@@ -466,8 +466,8 @@ list_param: [1]
 
 @mock.patch.dict(os.environ, {"PARAM_DEVICE_DIR": "device"})
 def test_append_tag_then_override(tmp_path: Path) -> None:
-    """Test that a plain list on a higher layer overrides an !append result from a lower layer, instead of
-    concatenating onto it."""
+    """Test that a plain list on a higher layer overrides an !append result from a lower layer, instead of concatenating
+    onto it."""
     package_name = "test_package"
     test_file_1 = "test_file1.yaml"
 
