@@ -178,7 +178,7 @@ class Configuration:
 
         with io.StringIO() as stream:
             yaml.dump(data, stream)
-            return stream.getvalue()
+            return stream.getvalue().rstrip("\n")
 
     @staticmethod
     def dump_to_file(data: dict, path: str, yaml_version: Optional[str] = None) -> str:
