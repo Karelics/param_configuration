@@ -14,6 +14,7 @@
 #   limitations under the License.
 #  ------------------------------------------------------------------
 """Tests for validating the behavior in test_config space."""
+
 import os
 from pathlib import Path
 from unittest import mock
@@ -39,7 +40,8 @@ def test_getting_yaml_from_config(test_config_path: Path) -> None:
     with TempConfigEnv(path=test_config_path):
         config = Configuration()
         data = config.load("config://navigation_params.yaml")
-        assert data == {"nested_param": {"model_param": 2, "device_param": 1}}
+        assert data == {"nested_param": {"model_param": 2, "device_param": 1}, "list_param": [1, 2]}
+        assert type(data["list_param"]) is list  # pylint: disable=unidiomatic-typecheck
 
 
 def test_walk_dir(test_config_path: Path) -> None:

@@ -16,6 +16,7 @@
 
 
 # Parameter Configuration
+from param_configuration.tags.append import AppendConfigConstructor  # noqa
 from param_configuration.tags.eval import EvalConfigConstructor  # noqa
 from param_configuration.tags.from_config import FromConfigConstructor  # noqa
 from param_configuration.tags.include import IncludeConfigConstructor  # noqa

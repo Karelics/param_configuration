@@ -13,6 +13,7 @@ Available tags:
 * *From*: Retrieves values from other YAML files.
 * *Include*: Fully includes another configuration file
 * *Merge*: Merges multiple key-value pairs to be under a single key
+* *Append*: Concatenates a list onto the same key's list from a lower overlay layer, instead of overwriting it
 
 // Raw
 ////

@@ -1,3 +1,4 @@
 !overlay
 nested_param:
   device_param: 1
+list_param: !append [2]
