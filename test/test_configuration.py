@@ -465,6 +465,78 @@ list_param: [1]
 
 
 @mock.patch.dict(os.environ, {"PARAM_DEVICE_DIR": "device"})
+def test_append_tag_no_device_layer(tmp_path: Path) -> None:
+    """Test that !append works correctly when there is no device layer.
+
+    Regression test for #18
+    """
+    package_name = "test_package"
+    test_file_1 = "test_file1.yaml"
+
+    model_data = """
+!overlay
+list_param: !append [2]
+"""
+
+    package_data = """
+list_param: [1]
+"""
+
+    write_to_file_config_layer(model_data, "model", package_name, test_file_1, tmp_path)
+
+    package_dir = tmp_path / "test_install_space/"
+    (package_dir / package_name / "params/").mkdir(parents=True, exist_ok=True)
+    package_param_file = package_dir / package_name
+    (package_param_file / "params/test_file1.yaml").write_text(package_data)
+
+    with mock.patch(
+        "param_configuration.config_layers.ros_package.get_package_share_directory",
+        return_value=str(package_param_file),
+    ):
+        with TempConfigEnv(path=tmp_path):
+            configuration = Configuration()
+            data = configuration.load(f"config://{package_name}/{test_file_1}")
+            assert data == {"list_param": [1, 2]}
+            assert type(data["list_param"]) is list  # pylint: disable=unidiomatic-typecheck
+
+
+@mock.patch.dict(os.environ, {"PARAM_DEVICE_DIR": "device"})
+def test_append_tag_no_model_layer(tmp_path: Path) -> None:
+    """Test that !append on the device layer is applied once onto the ROS package layer when there is no model layer.
+
+    Regression test for #18
+    """
+    package_name = "test_package"
+    test_file_1 = "test_file1.yaml"
+
+    device_data = """
+!overlay
+list_param: !append [3]
+"""
+
+    package_data = """
+list_param: [1]
+"""
+
+    write_to_file_config_layer(device_data, "device", package_name, test_file_1, tmp_path)
+
+    package_dir = tmp_path / "test_install_space/"
+    (package_dir / package_name / "params/").mkdir(parents=True, exist_ok=True)
+    package_param_file = package_dir / package_name
+    (package_param_file / "params/test_file1.yaml").write_text(package_data)
+
+    with mock.patch(
+        "param_configuration.config_layers.ros_package.get_package_share_directory",
+        return_value=str(package_param_file),
+    ):
+        with TempConfigEnv(path=tmp_path):
+            configuration = Configuration()
+            data = configuration.load(f"config://{package_name}/{test_file_1}")
+            assert data == {"list_param": [1, 3]}
+            assert type(data["list_param"]) is list  # pylint: disable=unidiomatic-typecheck
+
+
+@mock.patch.dict(os.environ, {"PARAM_DEVICE_DIR": "device"})
 def test_append_tag_then_override(tmp_path: Path) -> None:
     """Test that a plain list on a higher layer overrides an !append result from a lower layer, instead of concatenating
     onto it."""
