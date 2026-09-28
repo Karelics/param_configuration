@@ -56,7 +56,7 @@ class PathResolver:
 
         The underlay layers are the layers below the one the file was found in, e.g. [model, ros] for a device file, or
         [ros] for a model file when the device file is missing. The !overlay tag loads the file's underlay from these
-        layers. For anything other than a "config:" path, the underlay layers are all layers except the first.
+        layers. Anything other than a "config:" path, e.g. an absolute path or a YAML string, has no underlay layers.
 
         :param path: YAML in string format, or path to the YAML file
         :param config_layers: List of configuration layers that describe the order of overlaying different YAML files.
@@ -68,7 +68,7 @@ class PathResolver:
         layers = self._layers if config_layers is None else config_layers
 
         if not path.startswith("config:"):
-            return path, layers[1:]
+            return path, []
 
         for i, layer in enumerate(layers):
             data = layer.load(path)

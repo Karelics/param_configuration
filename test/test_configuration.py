@@ -676,6 +676,63 @@ var3: "package_level_var3"
             }
 
 
+def test_overlay_bottom_layer(tmp_path: Path) -> None:
+    """Test that !overlay in the bottom-most layer has nothing to overlay on and returns the file as is."""
+    package_name = "test_package"
+    test_file_1 = "test_file1.yaml"
+
+    package_data = """
+!overlay
+list_param: !append [1]
+var: 1
+"""
+
+    package_dir = tmp_path / "test_install_space/"
+    (package_dir / package_name / "params/").mkdir(parents=True, exist_ok=True)
+    package_param_file = package_dir / package_name
+    (package_param_file / "params/test_file1.yaml").write_text(package_data)
+
+    with mock.patch(
+        "param_configuration.config_layers.ros_package.get_package_share_directory",
+        return_value=str(package_param_file),
+    ):
+        with TempConfigEnv(path=tmp_path):
+            data = Configuration().load(f"config://{package_name}/{test_file_1}")
+            assert data == {"list_param": [1], "var": 1}
+            assert type(data["list_param"]) is list  # pylint: disable=unidiomatic-typecheck
+
+
+def test_overlay_absolute_path(tmp_path: Path) -> None:
+    """Test that !overlay in a file loaded by absolute path has nothing to overlay on and returns the file as is."""
+    test_file = tmp_path / "test_file1.yaml"
+    test_file.write_text(
+        """
+!overlay
+list_param: !append [1]
+var: 1
+"""
+    )
+
+    with TempConfigEnv(path=tmp_path):
+        data = Configuration().load(str(test_file))
+        assert data == {"list_param": [1], "var": 1}
+        assert type(data["list_param"]) is list  # pylint: disable=unidiomatic-typecheck
+
+
+def test_overlay_yaml_string(tmp_path: Path) -> None:
+    """Test that !overlay in a YAML string has nothing to overlay on and returns the YAML as is."""
+    yaml_string = """
+!overlay
+list_param: !append [1]
+var: 1
+"""
+
+    with TempConfigEnv(path=tmp_path):
+        data = Configuration().load(yaml_string)
+        assert data == {"list_param": [1], "var": 1}
+        assert type(data["list_param"]) is list  # pylint: disable=unidiomatic-typecheck
+
+
 @mock.patch.dict(os.environ, {"PARAM_DEVICE_DIR": "device"})
 def test_nested_tags(tmp_path: Path) -> None:
     """Test nested tags."""
