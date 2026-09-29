@@ -15,7 +15,7 @@
 #  ------------------------------------------------------------------
 import os
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Tuple, Union
 
 # Parameter Configuration
 from param_configuration.config_layer import ConfigLayer
@@ -47,17 +47,33 @@ class PathResolver:
         :return: Resolved configuration data as a string or Path object.
         :raises ValueError: If the path cannot be resolved
         """
+        return self.resolve_path_with_underlay(path, config_layers=config_layers)[0]
+
+    def resolve_path_with_underlay(
+        self, path: Union[str, Path], config_layers: Optional[list[ConfigLayer]] = None
+    ) -> Tuple[Union[str, Path], list[ConfigLayer]]:
+        """Same as resolve_path, but also returns the underlay layers for the resolved file.
+
+        The underlay layers are the layers below the one the file was found in, e.g. [model, ros] for a device file, or
+        [ros] for a model file when the device file is missing. The !overlay tag loads the file's underlay from these
+        layers. Anything other than a "config:" path, e.g. an absolute path or a YAML string, has no underlay layers.
+
+        :param path: YAML in string format, or path to the YAML file
+        :param config_layers: List of configuration layers that describe the order of overlaying different YAML files.
+            If None, uses the default layers
+        :return: Tuple of the resolved configuration data as a string or Path object, and the underlay layers.
+        :raises ValueError: If the path cannot be resolved
+        """
         path = str(path)
-
-        if not path.startswith("config:"):
-            return path
-
         layers = self._layers if config_layers is None else config_layers
 
-        for layer in layers:
+        if not path.startswith("config:"):
+            return path, []
+
+        for i, layer in enumerate(layers):
             data = layer.load(path)
             if data is not None:
-                return data
+                return data, layers[i + 1 :]
 
         raise ValueError(f"Could not resolve {path}")
 

@@ -15,9 +15,11 @@
 #  ------------------------------------------------------------------
 # Thirdparty
 from ruamel.yaml import BaseConstructor
+from ruamel.yaml.comments import CommentedMap
 
 # Parameter Configuration
 from param_configuration.configuration import ConfigConstructor, Configuration
+from param_configuration.path_resolver import PathResolver
 from param_configuration.utils import merge_left
 
 # pylint: disable=too-few-public-methods
@@ -28,7 +30,9 @@ class OverlayConfigConstructor(ConfigConstructor, tag="!overlay"):
     """The !overlay directive makes it possible to overlay files from different layers."""
 
     def constructor(self, tag_value: str, file: str, loader: BaseConstructor):
-        underlay = Configuration().load(self.file, config_layers=self.config_layers[1:])
+        # Overlay on the layers below the one this file was resolved from, if any
+        _, underlay_layers = PathResolver().resolve_path_with_underlay(self.file, config_layers=self.config_layers)
+        underlay = Configuration().load(self.file, config_layers=underlay_layers) if underlay_layers else CommentedMap()
         for i in tag_value:
             merge_left(underlay, i)
         return underlay
