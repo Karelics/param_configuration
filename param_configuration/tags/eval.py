@@ -105,11 +105,13 @@ class EvalConfigConstructor(ConfigConstructor, tag="!eval"):
                 if key != ".variables":
                     continue
 
-                yaml_seq = list(loader.construct_yaml_seq(node=value_node))[0]
-                if yaml_seq:
-                    for var in yaml_seq:
-                        if var:
-                            variables |= var
+                # Construct variables one by one, so that a variable can refer to the ones defined before it
+                for item_node in value_node.value:
+                    if item_node in loader.recursive_objects:
+                        break  # Currently being constructed: only earlier variables are visible
+                    var = loader.construct_object(item_node, deep=True)
+                    if var:
+                        variables |= var
         return variables
 
     @staticmethod

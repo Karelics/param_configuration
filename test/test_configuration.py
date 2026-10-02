@@ -170,19 +170,29 @@ def test_eval_variables() -> None:
     assert data == {"other_vars": [{"var_3": "abc"}], "eval_1": 2, "eval_2": [3, 2, 37], "eval_3": 3}
 
 
-# TODO Multiple nested variables are not yet supported
-@pytest.mark.skip(reason="Known issue")
 def test_eval_variables_multiple_levels() -> None:
     """Test loading multiple-levelled nested variables."""
     yaml_data = """
+    eval_1: !eval var.var_3  # Defined before the variables on purpose
     .variables:
     - var_1: 1
     - var_2: !eval var.var_1 + 1
-    - var_3: !eval var.var_2 + 1
-    eval_1: !eval var.var_2
+    - var_3: !eval var.var_1 + var.var_2
+    eval_2: !eval var.var_2
     """
     data = Configuration().load(yaml_data)
-    assert data == {"eval_1": 3}
+    assert data == {"eval_1": 3, "eval_2": 2}
+
+
+def test_eval_variables_forward_reference() -> None:
+    """A variable can only refer to the variables defined before it."""
+    yaml_data = """
+    .variables:
+    - var_1: !eval var.var_2
+    - var_2: 5
+    """
+    with pytest.raises(AttributeDoesNotExist):
+        Configuration().load(yaml_data)
 
 
 def test_eval_non_existing_var() -> None:
@@ -245,6 +255,40 @@ def test_eval_with_overlay(tmp_path: Path, yaml_string: str) -> None:
                     "use_var": 100,
                     "not_in_model_data": 0,
                 }
+
+
+def test_eval_variables_multiple_levels_with_overlay(tmp_path: Path) -> None:
+    """Test multiple-levelled nested variables with the !overlay tag."""
+    test_file = "test_file1.yaml"
+    test_pkg = "test_package"
+
+    model_data = """!overlay
+    .variables:
+    - var_1: 1
+    - var_2: !eval var.var_1 + 1
+    - var_3: !eval var.var_2 + 1
+    eval_1: !eval var.var_3
+    """
+
+    package_data = """
+    eval_1: 0
+    not_in_model_data: 0
+    """
+
+    write_to_file_config_layer(
+        model_data, level="model", package_name=test_pkg, file_name=test_file, config_base_dir=tmp_path
+    )
+    pkg_param_file = write_to_ros_pkg_layer(
+        package_data, package_name=test_pkg, file_name=test_file, config_base_dir=tmp_path
+    )
+
+    with mock.patch(
+        "param_configuration.config_layers.ros_package.get_package_share_directory",
+        return_value=str(pkg_param_file),
+    ):
+        with TempConfigEnv(path=tmp_path):
+            data = Configuration().load(f"config://{test_pkg}/{test_file}")
+            assert data == {"eval_1": 3, "not_in_model_data": 0}
 
 
 def test_eval_get_resolved_yaml(tmp_path: Path):
