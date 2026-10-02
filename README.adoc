@@ -180,7 +180,7 @@ Examples and tutorials can be found in link:examples[examples] folder.
 
 |!eval var.<var_name>
 |-
-|Allows using variables which are defined in the beginning of the same file, under ".variables" -key. This key will be removed from the result file.
+|Allows using variables which are defined in the beginning of the same file, under ".variables" -key. This key will be removed from the result file. Variables can be nested: a variable can use `!eval` to refer to any variable defined before it in the list, e.g. `- var_2: !eval var.var_1 + 1`.
 |===
 
 
@@ -193,10 +193,6 @@ If you have feature requests or find any bugs or usability issues, please open a
 == Known limitations
 
 * ROS layer parameters have to be in "params" -folder
-* Eval variables support only two levels of nesting:
-** SUPPORTED: var_1: 1
-** SUPPORTED: var_2: !eval var.var_1 + 1
-** NOT SUPPORTED: var_3: !eval var.var_2 + 1
 * Comments might be on the wrong lines in the resolved YAML
 
 == Open questions
